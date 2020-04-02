@@ -1,2 +1,4 @@
 .idea/*
-TODOs
+test/TODOs
+test/testPage.html
+db.sql
