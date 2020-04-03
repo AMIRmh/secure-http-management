@@ -64,7 +64,7 @@ func main() {
 		shm.AutomaticRegistrationPrevention(http.HandlerFunc(signupHandler)))
 
 	log.Fatal(http.ListenAndServeTLS(":4443",
-		"server.crt", "server.key", mux))
+		"test/server.crt", "test/server.key", mux))
 
 }
 

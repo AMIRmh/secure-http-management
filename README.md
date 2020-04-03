@@ -71,7 +71,7 @@ func main() {
 two functions to create and verify
 the secure password.
 these functions use local database.
-```
+```go
     passwordStruct, err := shm.CreatePassword(password)
     
     // if err == nil password is true
