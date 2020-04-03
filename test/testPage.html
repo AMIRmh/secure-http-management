@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>test page</title>
+    <script>
+        function clickLogin() {
+            document.forms.namedItem("forget").hidden = true;
+            document.forms.namedItem("signup").hidden = true;
+            document.forms.namedItem("login").hidden = false;
+        }
+        function clickSignup() {
+            document.forms.namedItem("login").hidden = true;
+            document.forms.namedItem("forget").hidden = true;
+            document.forms.namedItem("signup").hidden = false;
+        }
+        function clickForget() {
+            document.forms.namedItem("signup").hidden = true;
+            document.forms.namedItem("login").hidden = true;
+            document.forms.namedItem("forget").hidden = false;
+        }
+    </script>
+</head>
+<body>
+<a href="#" onclick="clickSignup()">signup</a><br><br>
+<a href="#" onclick="clickLogin()">login</a><br><br>
+<a href="#" onclick="clickForget()">forget password</a><br><br>
+<br><br><br><br><br>
+<form action="/signup" id="signup" method="POST" hidden>
+    <label for="username">username: </label><br>
+    <input type="text" name="username"><br>
+    <label for="password">password: </label><br>
+    <input type="password" name="password"><br>
+    <label for="email">email: </label><br>
+    <input type="text" name="email"><br>
+    <input type="submit">
+</form>
+<form action="/login" id="login" method="POST" hidden>
+    <label for="username">username: </label><br>
+    <input type="text" name="username"><br>
+    <label for="password">password: </label><br>
+    <input type="password" name="password"><br>
+    <input type="submit">
+</form>
+<form action="/forget" id="forget" method="POST" hidden>
+    <label for="email">email: </label><br>
+    <input type="text" name="email"><br>
+    <input type="submit">
+</form>
+</body>
+</html>
