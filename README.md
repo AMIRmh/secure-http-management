@@ -25,6 +25,7 @@ and pepper.
 ## How to use
 
 [Automatic Registration Prevention](#Automatic-Registration-Prevention)
+
 [Secure Password](#Secure-Password)
 
 ### Automatic Registration Prevention
