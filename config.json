@@ -1,0 +1,5 @@
+{
+  "idleTimeout": "3h",
+  "absoluteTimeout": "24h",
+  "renewalTimeout": "1h"
+}
