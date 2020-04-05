@@ -7,10 +7,10 @@ import (
 
 var config map[string]interface{}
 
-func ConfigGet(key string) (interface{}, error) {
+func GetConfig() (map[string]interface{}, error) {
 
 	if config != nil {
-		return config[key], nil
+		return config, nil
 	}
 	content, _ := ioutil.ReadFile("config.json")
 	err := json.Unmarshal(content, &config)
@@ -18,5 +18,5 @@ func ConfigGet(key string) (interface{}, error) {
 		return nil, err
 	}
 
-	return config[key], nil
+	return config, nil
 }

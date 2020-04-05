@@ -48,6 +48,7 @@ func GetUserInfo(username string) (Userinfo, error) {
 			&uInfo.Email, &uInfo.Salt,
 			&uInfo.Iterations, &sessionStructBytes, &sessionBytes)
 
+		uInfo.session.username = uInfo.Username
 		if sessionStructBytes != nil {
 			ss := bytes.NewBuffer(sessionStructBytes)
 			dec := gob.NewDecoder(ss)
