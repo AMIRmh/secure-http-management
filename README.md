@@ -44,6 +44,11 @@ import (
 	"net/http"
 	shm "secure-http-management"
 )
+
+var (
+	sm shm.SessionManager
+)
+
 func signupHandler(w http.ResponseWriter, r *http.Request) {
     //your logic to signup
     passwordStruct, err := shm.CreatePassword(password)
@@ -52,12 +57,14 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 		passwordStruct.Password, passwordStruct.Salt)
 	checkErr(err)
 
-	shm.AddRegister(r)
+    sm.AddRegister(r)
 }
 func main() {
+    sm, err := shm.NewSessionManager()
+	checkErr(err)
     mux := http.NewServeMux()
 	mux.Handle("/signup",
-		shm.AutomaticRegistrationPrevention(http.HandlerFunc(signupHandler)))
+		sm.AutomaticRegistrationPrevention(http.HandlerFunc(signupHandler)))
 
 	log.Fatal(http.ListenAndServeTLS(":4443",
 		"test/server.crt", "test/server.key", mux))
