@@ -1,5 +1,8 @@
 {
-  "idleTimeout": "3h",
-  "absoluteTimeout": "24h",
-  "renewalTimeout": "1h"
+  "time": {
+    "idleTimeout": "3h",
+    "absoluteTimeout": "24h",
+    "renewalTimeout": "1h"
+  },
+  "tokenName": "token_id"
 }

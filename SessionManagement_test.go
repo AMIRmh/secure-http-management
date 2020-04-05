@@ -25,7 +25,12 @@ func TestRenewSession(t *testing.T) {
 		}
 	}
 
-	err = RenewSession(uinfo.Username)
+	sm, err := NewSessionManager()
+	if err != nil {
+		t.Error(err.Error())
+	}
+
+	err = sm.RenewSession(uinfo.Username)
 	if err != nil {
 		t.Error(err.Error())
 	}

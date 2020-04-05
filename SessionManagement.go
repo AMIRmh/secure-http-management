@@ -4,7 +4,6 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"net/http"
-	"strings"
 	"time"
 )
 
@@ -38,20 +37,18 @@ func NewSessionManager() (SessionManager, error) {
 
 	ss := SessionManager{}
 
-	for key, val := range config {
-		if strings.Contains(key, "Timeout") {
-			valStr := val.(string)
-			switch key {
-			case "idleTimeout":
-				ss.idleTimeout, err = time.ParseDuration(valStr)
-			case "renewalTimeout":
-				ss.renewalTimeout, err = time.ParseDuration(valStr)
-			case "absoluteTimeout":
-				ss.absoluteTimeout, err = time.ParseDuration(valStr)
-			}
-			if err != nil {
-				return SessionManager{}, err
-			}
+	for key, val := range config["time"].(map[string]interface{}) {
+		valStr := val.(string)
+		switch key {
+		case "idleTimeout":
+			ss.idleTimeout, err = time.ParseDuration(valStr)
+		case "renewalTimeout":
+			ss.renewalTimeout, err = time.ParseDuration(valStr)
+		case "absoluteTimeout":
+			ss.absoluteTimeout, err = time.ParseDuration(valStr)
+		}
+		if err != nil {
+			return SessionManager{}, err
 		}
 	}
 	return ss, nil
@@ -86,7 +83,9 @@ func (sm *SessionManager) RenewSession(username string) error {
 func (sm *SessionManager) SessionManagement(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// TODO set necessary headers
-		token := r.Header.Get("token_id")
+		config, _ := GetConfig()
+
+		token := r.Header.Get(config["tokenName"].(string))
 		tokenBytes, err := base64.StdEncoding.DecodeString(token)
 		if err != nil || len(tokenBytes) != 128 {
 			token, err = randomBase64()
@@ -100,17 +99,16 @@ func (sm *SessionManager) SessionManagement(next http.Handler) http.Handler {
 			// maybe should be changed in the future
 			return
 		}
-
 	})
-
 }
 
-func getIP(r *http.Request) string {
-	forwarded := r.Header.Get("X-FORWARDED-FOR")
-	if forwarded != "" {
-		return forwarded
-	}
-	return r.RemoteAddr
+func (sm *SessionManager) addOrUpdateSession(session Session) {
+	s := base64.StdEncoding.EncodeToString(session.session)
+	sm.activeSessions[s] = session
+}
+
+func (sm *SessionManager) addAnonymousSession(token string) {
+	sm.anonymousSessions = append(sm.anonymousSessions, token)
 }
 
 func (sm *SessionManager) AddRegister(r *http.Request) {
@@ -135,15 +133,6 @@ func (sm *SessionManager) AutomaticRegistrationPrevention(next http.Handler) htt
 		}
 		next.ServeHTTP(w, r)
 	})
-}
-
-func (sm *SessionManager) addOrUpdateSession(session Session) {
-	s := base64.StdEncoding.EncodeToString(session.session)
-	sm.activeSessions[s] = session
-}
-
-func (sm *SessionManager) addAnonymousSession(token string) {
-	sm.anonymousSessions = append(sm.anonymousSessions, token)
 }
 
 func (sm *SessionManager) invalidateSession() {
