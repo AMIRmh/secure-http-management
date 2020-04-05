@@ -7,6 +7,10 @@ import (
 	shm "secure-http-management"
 )
 
+var (
+	sm shm.SessionManager
+)
+
 func loginHanlder(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	checkErr(err)
@@ -41,7 +45,7 @@ func signupHandler(w http.ResponseWriter, r *http.Request) {
 		passwordStruct.Password, passwordStruct.Salt)
 	checkErr(err)
 
-	shm.AddRegister(r)
+	sm.AddRegister(r)
 	content, _ := ioutil.ReadFile("test/login.html")
 	_, err = w.Write(content)
 	checkErr(err)
@@ -57,11 +61,14 @@ func defaultHandler(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	//http.HandleFunc("/login", loginHanlder)
+
+	sm, err := shm.NewSessionManager()
+	checkErr(err)
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", defaultHandler)
 	mux.HandleFunc("/login", loginHanlder)
 	mux.Handle("/signup",
-		shm.AutomaticRegistrationPrevention(http.HandlerFunc(signupHandler)))
+		sm.AutomaticRegistrationPrevention(http.HandlerFunc(signupHandler)))
 
 	log.Fatal(http.ListenAndServeTLS(":4443",
 		"test/server.crt", "test/server.key", mux))

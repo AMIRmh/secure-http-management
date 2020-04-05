@@ -2,6 +2,7 @@ package shm
 
 import (
 	"testing"
+	"time"
 )
 
 func TestRenewSession(t *testing.T) {
@@ -45,5 +46,20 @@ func TestRenewSession(t *testing.T) {
 	err = DelUserInfo(TEST_USER)
 	if err != nil {
 		t.Error(err.Error())
+	}
+}
+
+func TestNewSessionManager(t *testing.T) {
+	sm, err := NewSessionManager()
+	if err != nil {
+		t.Error(err.Error())
+	}
+	config, _ := GetConfig()
+	tt, err := time.ParseDuration(config["absoluteTimeout"].(string))
+	if err != nil {
+		t.Error(err.Error())
+	}
+	if sm.absoluteTimeout != tt {
+		t.Error("wrong assignment")
 	}
 }
